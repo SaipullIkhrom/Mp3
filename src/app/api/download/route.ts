@@ -32,7 +32,7 @@ export async function GET(request: Request) {
       throw new Error(data.text || "Gagal mendapatkan link download");
     }
   } catch (error: any) {
-    console.error("API Error:", error.message);
+    console.error("DETAIL ERROR COBALT:", error);
     return NextResponse.json(
       { error: "Server sibuk atau link tidak didukung. Coba lagi nanti." },
       { status: 500 }
