@@ -3,25 +3,30 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const url = searchParams.get("url");
-  const format = searchParams.get("format");
 
   if (!url) {
     return NextResponse.json({ error: "URL tidak boleh kosong" }, { status: 400 });
   }
 
   try {
-    // 1. Ambil Video ID dari URL YouTube
-    const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
+    // Fungsi ekstraksi ID yang lebih kuat
+    
+    const extractVideoId = (url: string) => {
+      const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[7].length === 11) ? match[7] : null;
+    };
+
+    const videoId = extractVideoId(url);
 
     if (!videoId) {
-      throw new Error("ID Video tidak ditemukan");
+      return NextResponse.json({ error: "ID Video YouTube tidak valid" }, { status: 400 });
     }
 
-    // 2. Panggil API dari RapidAPI (YouTube MP3)
+    // Panggil API RapidAPI dengan ID bersih
     const res = await fetch(`https://youtube-mp36.p.rapidapi.com/dl?id=${videoId}`, {
       method: 'GET',
       headers: {
-        // Gunakan Key yang ada di gambar kamu
         'x-rapidapi-key': '60ba667ea8msh8a4d3066ccd8c5ep159555jsncd08727aa2d1',
         'x-rapidapi-host': 'youtube-mp36.p.rapidapi.com'
       }
@@ -29,17 +34,21 @@ export async function GET(request: Request) {
 
     const data = await res.json();
 
-    // 3. Cek apakah API memberikan link download (biasanya di field 'link')
+    // Jika API mengembalikan status sukses
     if (data.status === "ok" && data.link) {
       return NextResponse.json({ downloadUrl: data.link });
-    } else {
-      throw new Error(data.msg || "Gagal mendapatkan link download dari API.");
-    }
+    } 
+    
+    // Jika API memberikan pesan error spesifik
+    return NextResponse.json(
+      { error: data.msg || "API tidak dapat memproses video ini." },
+      { status: 400 }
+    );
 
   } catch (error: any) {
     console.error("RapidAPI Error:", error.message);
     return NextResponse.json(
-      { error: `Terjadi kesalahan: ${error.message}` },
+      { error: "Gagal menyambung ke server API. Coba lagi nanti." },
       { status: 500 }
     );
   }
