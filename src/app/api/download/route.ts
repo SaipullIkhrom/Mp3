@@ -1,46 +1,42 @@
 import { NextResponse } from "next/server";
-import ytdl from "@distube/ytdl-core";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const url = searchParams.get("url");
-  const format = searchParams.get("format");
+  const format = searchParams.get("format"); // mp3 atau mp4
 
-  if (!url || !ytdl.validateURL(url)) {
-    return NextResponse.json({ error: "URL tidak valid" }, { status: 400 });
+  if (!url) {
+    return NextResponse.json({ error: "URL tidak boleh kosong" }, { status: 400 });
   }
 
   try {
-    const info = await ytdl.getInfo(url);
-    const cleanTitle = info.videoDetails.title.replace(/[^\w\s]/gi, "");
-
-    const downloadOptions: ytdl.downloadOptions = {
-      quality: format === "mp3" ? "highestaudio" : "highest",
-      filter: format === "mp3" ? "audioonly" : "audioandvideo",
-      // Menggunakan agen standar tanpa cookie pribadi agar orang lain bisa pakai
-      requestOptions: {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-          "Accept-Language": "en-US,en;q=0.5",
-        },
-      },
-    };
-
-    const stream = ytdl(url, downloadOptions);
-
-    return new NextResponse(stream as any, {
+    // Menggunakan API Cobalt (Gratis & Open Source)
+    const response = await fetch("https://api.cobalt.tools/api/json", {
+      method: "POST",
       headers: {
-        "Content-Disposition": `attachment; filename="${cleanTitle}.${format === "mp3" ? "mp3" : "mp4"}"`,
-        "Content-Type": format === "mp3" ? "audio/mpeg" : "video/mp4",
-        
-        "Cache-Control": "no-cache",
+        "Accept": "application/json",
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        url: url,
+        downloadMode: format === "mp3" ? "audio" : "video",
+        videoQuality: "720",
+        audioFormat: "mp3",
+      }),
     });
+
+    const data = await response.json();
+
+    if (data.status === "stream" || data.status === "picker" || data.status === "redirect") {
+      // Mengarahkan user langsung ke link download yang diberikan API
+      return NextResponse.json({ downloadUrl: data.url });
+    } else {
+      throw new Error(data.text || "Gagal mendapatkan link download");
+    }
   } catch (error: any) {
-    console.error("Error Detail:", error.message);
+    console.error("API Error:", error.message);
     return NextResponse.json(
-      { error: "YouTube memblokir permintaan. Silakan coba video lain." },
+      { error: "Server sibuk atau link tidak didukung. Coba lagi nanti." },
       { status: 500 }
     );
   }
