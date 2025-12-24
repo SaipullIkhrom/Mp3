@@ -5,38 +5,41 @@ export async function GET(request: Request) {
   const url = searchParams.get("url");
   const format = searchParams.get("format");
 
-  if (!url) return NextResponse.json({ error: "URL kosong" }, { status: 400 });
+  if (!url) {
+    return NextResponse.json({ error: "URL tidak boleh kosong" }, { status: 400 });
+  }
 
   try {
-    // Ambil Video ID dari URL
+    // 1. Ambil Video ID dari URL YouTube
     const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
-    
-    // Menggunakan Instance Invidious yang stabil
-    const invidiousRes = await fetch(`https://invidious.sethforprivacy.com/api/v1/videos/${videoId}`);
-    const data = await invidiousRes.json();
 
-    if (!data.formatStreams || data.formatStreams.length === 0) {
-      throw new Error("Video tidak ditemukan atau tidak bisa diproses.");
+    if (!videoId) {
+      throw new Error("ID Video tidak ditemukan");
     }
 
-    
-    let finalUrl = "";
-    if (format === "mp3") {
-  
-      const audioStream = data.adaptiveFormats.find((f: any) => f.type.includes('audio/webm') || f.type.includes('audio/mp4'));
-      finalUrl = audioStream?.url;
+    // 2. Panggil API dari RapidAPI (YouTube MP3)
+    const res = await fetch(`https://youtube-mp36.p.rapidapi.com/dl?id=${videoId}`, {
+      method: 'GET',
+      headers: {
+        // Gunakan Key yang ada di gambar kamu
+        'x-rapidapi-key': '60ba667ea8msh8a4d3066ccd8c5ep159555jsncd08727aa2d1',
+        'x-rapidapi-host': 'youtube-mp36.p.rapidapi.com'
+      }
+    });
+
+    const data = await res.json();
+
+    // 3. Cek apakah API memberikan link download (biasanya di field 'link')
+    if (data.status === "ok" && data.link) {
+      return NextResponse.json({ downloadUrl: data.link });
     } else {
-  
-      finalUrl = data.formatStreams[0]?.url;
+      throw new Error(data.msg || "Gagal mendapatkan link download dari API.");
     }
 
-    if (!finalUrl) throw new Error("Link download tidak tersedia.");
-
-    return NextResponse.json({ downloadUrl: finalUrl });
   } catch (error: any) {
-    console.error("Error:", error.message);
+    console.error("RapidAPI Error:", error.message);
     return NextResponse.json(
-      { error: "YouTube memblokir akses ini. Coba video lain yang lebih pendek." },
+      { error: `Terjadi kesalahan: ${error.message}` },
       { status: 500 }
     );
   }
