@@ -20,7 +20,6 @@ export async function GET(request: Request) {
       body: JSON.stringify({
         url: url,
         downloadMode: format === "mp3" ? "audio" : "video",
-        videoQuality: "720",
         audioFormat: "mp3",
       }),
     });
@@ -28,7 +27,6 @@ export async function GET(request: Request) {
     const data = await response.json();
 
     if (data.status === "stream" || data.status === "picker" || data.status === "redirect") {
-      // Mengarahkan user langsung ke link download yang diberikan API
       return NextResponse.json({ downloadUrl: data.url });
     } else {
       throw new Error(data.text || "Gagal mendapatkan link download");
