@@ -13,7 +13,8 @@ export default function Home() {
   } | null>(null);
 
   // LINK SMARTLINK BARU SAIPUL
-  const SMARTLINK_URL = "https://www.effectivegatecpm.com/f1v3pp7j?key=44fbd607e91a5eeaba21e30c13f89b49";
+  const SMARTLINK_URL =
+    "https://www.effectivegatecpm.com/f1v3pp7j?key=44fbd607e91a5eeaba21e30c13f89b49";
 
   const handlePaste = async () => {
     try {
@@ -100,12 +101,21 @@ export default function Home() {
       />
 
       <div className="w-full max-w-2xl space-y-8">
+        {/* Header Section */}
         <div className="space-y-3 text-center">
-          <h1 className="bg-linear-to-tr from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-5xl font-black tracking-tight text-transparent sm:text-6xl">
-            Yreaa Downloader
-          </h1>
+          <a
+            href={SMARTLINK_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block cursor-pointer transition-transform active:scale-95"
+          >
+            <h1 className="bg-linear-to-tr from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-5xl font-black tracking-tight text-transparent sm:text-6xl">
+              Yreaa Downloader
+            </h1>
+          </a>
           <p className="mx-auto max-w-md text-lg text-slate-400">
-            Cara tercepat untuk konversi video YouTube menjadi MP3 atau MP4 berkualitas tinggi.
+            Cara tercepat untuk konversi video YouTube menjadi MP3 atau MP4
+            berkualitas tinggi.
           </p>
         </div>
 
@@ -165,7 +175,11 @@ export default function Home() {
             </div>
           )}
           {status && (
-            <div className={`flex items-center justify-center gap-2 animate-in fade-in zoom-in duration-300 ${status.type === "success" ? "text-emerald-400" : "text-red-400"}`}>
+            <div
+              className={`flex items-center justify-center gap-2 animate-in fade-in zoom-in duration-300 ${
+                status.type === "success" ? "text-emerald-400" : "text-red-400"
+              }`}
+            >
               {status.type === "success" && <CheckCircle2 size={18} />}
               <span className="font-medium">{status.msg}</span>
             </div>
