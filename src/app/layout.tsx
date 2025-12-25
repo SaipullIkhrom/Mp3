@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next"; // Tambahkan Viewport
+import type { Metadata, Viewport } from "next"; 
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// 1. Viewport agar iklan mobile pas ukurannya
+// 1. Viewport iklan
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
