@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Music, Video, Clipboard, X, CheckCircle2 } from "lucide-react";
-import Script from "next/script"; // Siap untuk iklan eksternal
+import Script from "next/script";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -12,7 +12,6 @@ export default function Home() {
     msg: string;
   } | null>(null);
 
-  // Fungsi untuk menempelkan link dari clipboard secara otomatis
   const handlePaste = async () => {
     try {
       const text = await navigator.clipboard.readText();
@@ -25,7 +24,6 @@ export default function Home() {
   const handleDownload = async (format: "mp3" | "mp4") => {
     if (!url) return;
 
-    // Validasi sederhana link YouTube
     if (!url.includes("youtube.com") && !url.includes("youtu.be")) {
       setStatus({ type: "error", msg: "Link YouTube tidak valid!" });
       return;
@@ -41,7 +39,6 @@ export default function Home() {
       const data = await res.json();
 
       if (data.downloadUrl) {
-        // Memicu trigger download otomatis di browser
         const link = document.createElement("a");
         link.href = data.downloadUrl;
         link.setAttribute("download", "");
@@ -65,9 +62,11 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6 text-white selection:bg-blue-500/30">
+      {/* 1. IKLAN SOCIAL BAR (Muncul sebagai notifikasi melayang) */}
+      {/* Ganti URL src di bawah dengan link 'Get Code' Social Bar dari dashboard Adsterra kamu */}
       <Script
-        id="adsterra-ads"
-        src="//www.highperformanceformat.com/ads-code.js"
+        id="adsterra-social-bar"
+        src="https://pl28329226.effectivegatecpm.com/e2/a3/69/e2a3694808f2a5d705128385eeed3318.js" 
         strategy="afterInteractive"
       />
 
@@ -85,12 +84,11 @@ export default function Home() {
             Yreaa Downloader
           </h1>
           <p className="mx-auto max-w-md text-lg text-slate-400">
-            Cara tercepat untuk konversi video YouTube menjadi MP3 atau MP4
-            berkualitas tinggi.
+            Cara tercepat untuk konversi video YouTube menjadi MP3 atau MP4 berkualitas tinggi.
           </p>
         </div>
 
-        {/* Input Card dengan Glassmorphism */}
+        {/* Input Card */}
         <div className="group relative rounded-2xl border border-white/10 bg-white/5 p-2 shadow-2xl backdrop-blur-xl transition-all hover:border-white/20">
           <div className="flex items-center gap-2">
             <input
@@ -100,20 +98,17 @@ export default function Home() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
             />
-
             <div className="flex pr-2 gap-1">
               {url && (
                 <button
                   onClick={() => setUrl("")}
                   className="p-2 text-slate-400 hover:text-white transition-colors"
-                  title="Hapus input"
                 >
                   <X size={20} />
                 </button>
               )}
               <button
                 onClick={handlePaste}
-                title="Tempel link"
                 className="rounded-lg bg-white/10 p-3 text-slate-300 transition-all hover:bg-white/20 active:scale-95"
               >
                 <Clipboard size={20} />
@@ -143,34 +138,29 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Status & Loading Section */}
+        {/* Status & Loading */}
         <div className="min-h-10 text-center">
           {loading && (
             <div className="flex items-center justify-center gap-3">
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-400 border-t-transparent"></div>
-              <span className="font-medium text-blue-400">
-                Memproses permintaan Anda...
-              </span>
+              <span className="font-medium text-blue-400">Memproses permintaan Anda...</span>
             </div>
           )}
-
           {status && (
-            <div
-              className={`flex items-center justify-center gap-2 animate-in fade-in zoom-in duration-300 ${
-                status.type === "success" ? "text-emerald-400" : "text-red-400"
-              }`}
-            >
+            <div className={`flex items-center justify-center gap-2 animate-in fade-in zoom-in duration-300 ${status.type === "success" ? "text-emerald-400" : "text-red-400"}`}>
               {status.type === "success" && <CheckCircle2 size={18} />}
               <span className="font-medium">{status.msg}</span>
             </div>
           )}
         </div>
 
-        {/* SLOT IKLAN BAWAH */}
-        <div className="flex min-h-40 items-center justify-center rounded-xl border border-dashed border-slate-800 bg-slate-900/40 p-4 transition-colors hover:bg-slate-900/60">
-          <p className="text-xs font-medium tracking-widest text-slate-600 uppercase">
-            Native Ads Space
-          </p>
+        {/* 2. SLOT IKLAN BAWAH (Native Banner) */}
+        <div className="flex min-h-40 flex-col items-center justify-center rounded-xl border border-dashed border-slate-800 bg-slate-900/40 p-4 transition-colors hover:bg-slate-900/60">
+           {/* Masukkan Script Iklan Native Banner kamu di bawah ini jika sudah punya kodenya */}
+           <p className="mb-2 text-[10px] font-medium tracking-widest text-slate-600 uppercase">Advertisement</p>
+           <div id="adsterra-native-container">
+              {/* Iklan Native akan muncul di sini otomatis jika menggunakan script penempatan */}
+           </div>
         </div>
       </div>
     </div>
