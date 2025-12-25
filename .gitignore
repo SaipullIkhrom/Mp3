@@ -2,6 +2,10 @@
 *-player-script.js
 .next/
 node_modules/
+
+# local env files
+.env*.local
+
 # dependencies
 /node_modules
 /.pnp

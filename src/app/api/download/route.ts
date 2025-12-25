@@ -3,38 +3,63 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const url = searchParams.get("url");
-  const format = searchParams.get("format") || "mp3";
 
   if (!url) {
-    return NextResponse.json({ error: "URL tidak ditemukan" }, { status: 400 });
+    return NextResponse.json(
+      { error: "URL tidak boleh kosong" },
+      { status: 400 }
+    );
   }
 
   try {
-    // Memanggil Cobalt API (Public Instance)
-    const response = await fetch("https://api.cobalt.tools/api/json", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-      body: JSON.stringify({
-        url: url,
-        downloadMode: format === "mp3" ? "audio" : "video",
-        audioFormat: "mp3",
-        videoQuality: "720",
-      }),
-    });
+    // Fungsi ekstraksi ID yang lebih kuat
+    const extractVideoId = (url: string) => {
+      const regExp =
+        /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+      const match = url.match(regExp);
+      return match && match[7].length === 11 ? match[7] : null;
+    };
 
-    const data = await response.json();
+    const videoId = extractVideoId(url);
 
-    if (data.status === "stream" || data.status === "picker" || data.status === "redirect") {
-      // Cobalt mengembalikan link di property 'url'
-      return NextResponse.json({ downloadUrl: data.url });
-    } else {
-      return NextResponse.json({ error: "Gagal memproses video. Pastikan link benar." }, { status: 500 });
+    if (!videoId) {
+      return NextResponse.json(
+        { error: "ID Video YouTube tidak valid" },
+        { status: 400 }
+      );
     }
-  } catch (error) {
-    console.error("Cobalt Error:", error);
-    return NextResponse.json({ error: "Terjadi kesalahan pada server Cobalt." }, { status: 500 });
+
+    // Gunakan objek Headers untuk menghindari error TypeScript
+    const headers = new Headers();
+    headers.set("x-rapidapi-key", process.env.RAPIDAPI_KEY || "");
+    headers.set("x-rapidapi-host", "youtube-mp36.p.rapidapi.com");
+
+    // Panggil API RapidAPI dengan ID bersih
+    const res = await fetch(
+      `https://youtube-mp36.p.rapidapi.com/dl?id=${videoId}`,
+      {
+        method: "GET",
+        headers: headers,
+      }
+    );
+
+    const data = await res.json();
+
+    // Jika API mengembalikan status sukses
+    if (data.status === "ok" && data.link) {
+      return NextResponse.json({ downloadUrl: data.link });
+    }
+
+    // Jika API memberikan pesan error spesifik
+    return NextResponse.json(
+      { error: data.msg || "API tidak dapat memproses video ini." },
+      { status: 400 }
+    );
+  } catch (error: any) {
+    console.error("RapidAPI Error:", error.message);
+    return NextResponse.json(
+      { error: "Gagal menyambung ke server API. Coba lagi nanti." },
+      { status: 500 }
+    );
   }
 }
