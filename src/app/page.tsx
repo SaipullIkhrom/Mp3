@@ -62,29 +62,36 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6 text-white selection:bg-blue-500/30">
-      {/* 1. IKLAN SOCIAL BAR (Muncul sebagai notifikasi melayang) */}
-      {/* Ganti URL src di bawah dengan link 'Get Code' Social Bar dari dashboard Adsterra kamu */}
+      {/* 1. IKLAN KESATU */}
       <Script
         id="adsterra-social-bar"
-        src="https://pl28329226.effectivegatecpm.com/e2/a3/69/e2a3694808f2a5d705128385eeed3318.js" 
+        src="https://pl28329226.effectivegatecpm.com/e2/a3/69/e2a3694808f2a5d705128385eeed3318.js"
+        strategy="afterInteractive"
+      />
+
+      {/* 2. IKLAN KEDUA */}
+      <Script
+        id="adsterra-invoke"
+        src="https://pl28329370.effectivegatecpm.com/31b09a60258f959cd2cf3347ab59d8b1/invoke.js"
+        strategy="afterInteractive"
+      />
+
+      {/* 3. IKLAN KETIGA */}
+      <Script
+        id="adsterra-third-ads"
+        src="https://pl28329390.effectivegatecpm.com/2c/65/e4/2c65e469284747fef2e5b41c72ae43ae.js"
         strategy="afterInteractive"
       />
 
       <div className="w-full max-w-2xl space-y-8">
-        {/* SLOT IKLAN ATAS */}
-        <div className="flex justify-center rounded-xl border border-dashed border-slate-800 bg-slate-900/40 p-2 transition-colors hover:bg-slate-900/60">
-          <p className="text-[10px] font-medium tracking-widest text-slate-600 uppercase">
-            Space for Advertisement
-          </p>
-        </div>
-
         {/* Header Section */}
         <div className="space-y-3 text-center">
           <h1 className="bg-linear-to-tr from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-5xl font-black tracking-tight text-transparent sm:text-6xl">
             Yreaa Downloader
           </h1>
           <p className="mx-auto max-w-md text-lg text-slate-400">
-            Cara tercepat untuk konversi video YouTube menjadi MP3 atau MP4 berkualitas tinggi.
+            Cara tercepat untuk konversi video YouTube menjadi MP3 atau MP4
+            berkualitas tinggi.
           </p>
         </div>
 
@@ -143,25 +150,25 @@ export default function Home() {
           {loading && (
             <div className="flex items-center justify-center gap-3">
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-400 border-t-transparent"></div>
-              <span className="font-medium text-blue-400">Memproses permintaan Anda...</span>
+              <span className="font-medium text-blue-400">
+                Memproses permintaan Anda...
+              </span>
             </div>
           )}
           {status && (
-            <div className={`flex items-center justify-center gap-2 animate-in fade-in zoom-in duration-300 ${status.type === "success" ? "text-emerald-400" : "text-red-400"}`}>
+            <div
+              className={`flex items-center justify-center gap-2 animate-in fade-in zoom-in duration-300 ${
+                status.type === "success" ? "text-emerald-400" : "text-red-400"
+              }`}
+            >
               {status.type === "success" && <CheckCircle2 size={18} />}
               <span className="font-medium">{status.msg}</span>
             </div>
           )}
         </div>
 
-        {/* 2. SLOT IKLAN BAWAH (Native Banner) */}
-        <div className="flex min-h-40 flex-col items-center justify-center rounded-xl border border-dashed border-slate-800 bg-slate-900/40 p-4 transition-colors hover:bg-slate-900/60">
-           {/* Masukkan Script Iklan Native Banner kamu di bawah ini jika sudah punya kodenya */}
-           <p className="mb-2 text-[10px] font-medium tracking-widest text-slate-600 uppercase">Advertisement</p>
-           <div id="adsterra-native-container">
-              {/* Iklan Native akan muncul di sini otomatis jika menggunakan script penempatan */}
-           </div>
-        </div>
+        {/* Kontainer untuk iklan Invoke */}
+        <div id="container-31b09a60258f959cd2cf3347ab59d8b1"></div>
       </div>
     </div>
   );
