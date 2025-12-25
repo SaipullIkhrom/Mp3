@@ -12,6 +12,9 @@ export default function Home() {
     msg: string;
   } | null>(null);
 
+  // LINK SMARTLINK BARU SAIPUL
+  const SMARTLINK_URL = "https://www.effectivegatecpm.com/f1v3pp7j?key=44fbd607e91a5eeaba21e30c13f89b49";
+
   const handlePaste = async () => {
     try {
       const text = await navigator.clipboard.readText();
@@ -23,6 +26,12 @@ export default function Home() {
 
   const handleDownload = async (format: "mp3" | "mp4") => {
     if (!url) return;
+
+    // --- EKSEKUSI SMARTLINK ---
+    // Membuka tab iklan baru saat tombol diklik
+    if (typeof window !== "undefined") {
+      window.open(SMARTLINK_URL, "_blank");
+    }
 
     if (!url.includes("youtube.com") && !url.includes("youtu.be")) {
       setStatus({ type: "error", msg: "Link YouTube tidak valid!" });
@@ -62,40 +71,44 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6 text-white selection:bg-blue-500/30">
-      {/* 1. IKLAN KESATU */}
+      {/* 1. SOCIAL BAR */}
       <Script
         id="adsterra-social-bar"
         src="https://pl28329226.effectivegatecpm.com/e2/a3/69/e2a3694808f2a5d705128385eeed3318.js"
         strategy="afterInteractive"
       />
 
-      {/* 2. IKLAN KEDUA */}
+      {/* 2. INVOKE */}
       <Script
         id="adsterra-invoke"
         src="https://pl28329370.effectivegatecpm.com/31b09a60258f959cd2cf3347ab59d8b1/invoke.js"
         strategy="afterInteractive"
       />
 
-      {/* 3. IKLAN KETIGA */}
+      {/* 3. SCRIPT TAMBAHAN */}
       <Script
         id="adsterra-third-ads"
         src="https://pl28329390.effectivegatecpm.com/2c/65/e4/2c65e469284747fef2e5b41c72ae43ae.js"
         strategy="afterInteractive"
       />
 
+      {/* 4. POPUNDER */}
+      <Script
+        id="adsterra-popunder"
+        src="https://www.effectivegatecpm.com/jv9a4v0t1?key=c037c705da6f3d090d5186d8209efbed"
+        strategy="afterInteractive"
+      />
+
       <div className="w-full max-w-2xl space-y-8">
-        {/* Header Section */}
         <div className="space-y-3 text-center">
           <h1 className="bg-linear-to-tr from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-5xl font-black tracking-tight text-transparent sm:text-6xl">
             Yreaa Downloader
           </h1>
           <p className="mx-auto max-w-md text-lg text-slate-400">
-            Cara tercepat untuk konversi video YouTube menjadi MP3 atau MP4
-            berkualitas tinggi.
+            Cara tercepat untuk konversi video YouTube menjadi MP3 atau MP4 berkualitas tinggi.
           </p>
         </div>
 
-        {/* Input Card */}
         <div className="group relative rounded-2xl border border-white/10 bg-white/5 p-2 shadow-2xl backdrop-blur-xl transition-all hover:border-white/20">
           <div className="flex items-center gap-2">
             <input
@@ -124,7 +137,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <button
             onClick={() => handleDownload("mp3")}
@@ -145,29 +157,21 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Status & Loading */}
         <div className="min-h-10 text-center">
           {loading && (
             <div className="flex items-center justify-center gap-3">
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-400 border-t-transparent"></div>
-              <span className="font-medium text-blue-400">
-                Memproses permintaan Anda...
-              </span>
+              <span className="font-medium text-blue-400">Memproses...</span>
             </div>
           )}
           {status && (
-            <div
-              className={`flex items-center justify-center gap-2 animate-in fade-in zoom-in duration-300 ${
-                status.type === "success" ? "text-emerald-400" : "text-red-400"
-              }`}
-            >
+            <div className={`flex items-center justify-center gap-2 animate-in fade-in zoom-in duration-300 ${status.type === "success" ? "text-emerald-400" : "text-red-400"}`}>
               {status.type === "success" && <CheckCircle2 size={18} />}
               <span className="font-medium">{status.msg}</span>
             </div>
           )}
         </div>
 
-        {/* Kontainer untuk iklan Invoke */}
         <div id="container-31b09a60258f959cd2cf3347ab59d8b1"></div>
       </div>
     </div>
